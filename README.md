@@ -21,5 +21,5 @@ It prints if the message is authentic
 This code uses updated pow module. If you have Python version which is older than 3.5 please consider rewriting parts of code where pow module is used
 
 # Tests
-Testing function may be seen in the program. It prints three rows in which the first one is where message and its signature are authentic and the following two are those where message or signature where modified
+Testing function may be seen in the program. It prints three rows in which the first one is where message and its signature are authentic and the following two are those where message or signature where modified.
 Function has passed all of these tests and succesfully could tell which pairs of message and signature where modified
