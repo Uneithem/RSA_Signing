@@ -1,6 +1,5 @@
 # NOTE: program is written and executed in Python 3.12 and uses updated pow module
-# If your Python version is < 3.5 you may need to replace pow module with simple
-# a ** b % m code or use faster ways to calculate desired expressions
+# If your Python version is < 3.5 you may need to replace pow module with an alternative that can be used in your version
 import random
 import hashlib
 from math import gcd
