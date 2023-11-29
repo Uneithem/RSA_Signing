@@ -112,7 +112,7 @@ def verify(mess, ciphertext, pub_key):
     if hash_bin == RSA(0, pub_key, ciphertext=ciphertext, decrypt=True):
         return "The signature is authentic"
     else:
-        return "Message or private key may have been compromised"
+        return "Message or public key may have been compromised"
 
 # Test examples
 def TestVer(pr_key, pb_key):
