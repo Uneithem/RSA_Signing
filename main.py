@@ -73,16 +73,17 @@ def KeyGen(keylength=1024):
     return priv_key, pub_key
 
 # Encryption and decryption functions are quite simple due to update of pow module in Python 3.5
-def enc(message, public):
-    element = bin(pow(int(message, 2), public[1], public[0]))[2:]
+def enc(message, private):
+    element = bin(pow(int(message, 2), private[1], private[0]))[2:]
     c_bin = element.zfill(((len(element) // 8 + 1) * 8))
     return c_bin
 
 
-def dec(ciphertext, private):
-    element = bin(pow(int(ciphertext, 2), private[1], private[0]))[2:]
+def dec(ciphertext, public):
+    element = bin(pow(int(ciphertext, 2), public[1], public[0]))[2:]
     m_bin = element.zfill((len(element) // 8 + 1) * 8)
     return m_bin
+
 
 # RSA functions works as both encryption and decryption function. In order to use it for encryption please
 # specify that encrypt=True upon calling function, for decryption use decrypt=True
@@ -91,24 +92,24 @@ def RSA(pr_key, pb_key, message='', ciphertext='', encrypt=False, decrypt=False)
         mes_bin = ''
         for char in message:
             mes_bin += bin(ord(char))[2:].zfill(8)
-        return enc(mes_bin, pb_key)
+        return enc(mes_bin, pr_key)
     if decrypt:
-        return dec(ciphertext, pr_key)
+        return dec(ciphertext, pb_key)
     if not encrypt and not decrypt:
         return "Please, specify if you want to encrypt message or decrypt it"
 
 # Signing functions turns message into its sha-256 hash, encodes and returns tuple of message hash and its signature
-def sign(message, pb_key):
+def sign(message, pr_key):
     message = message.encode()
     hashed = hashlib.sha256(message).hexdigest()
-    return hashed, RSA(0, pb_key, message=hashed, encrypt=True)
+    return hashed, RSA(pr_key, 0, message=hashed, encrypt=True)
 
 # Digital signature verification function, according to RSA algorythm
-def verify(mess, ciphertext, priv_key):
+def verify(mess, ciphertext, pub_key):
     hash_bin = ''
     for char in mess:
         hash_bin += bin(ord(char))[2:].zfill(8)
-    if hash_bin == RSA(priv_key, 0, ciphertext=ciphertext, decrypt=True):
+    if hash_bin == RSA(0, pub_key, ciphertext=ciphertext, decrypt=True):
         return "The signature is authentic"
     else:
         return "Message or private key may have been compromised"
@@ -116,17 +117,17 @@ def verify(mess, ciphertext, priv_key):
 # Test examples
 def TestVer(pr_key, pb_key):
     m1 = "Attack at dawn"
-    h1, c1 = sign(m1, pb_key)
-    print(verify(h1, c1, pr_key))
+    h1, c1 = sign(m1, pr_key)
+    print(verify(h1, c1, pb_key))
     h2 = h1[1:]
-    print(verify(h2, c1, pr_key))
+    print(verify(h2, c1, pb_key))
     c2 = bin(int(c1, 2) - 1)[2:]
-    print(verify(h1, c2, pr_key))
+    print(verify(h1, c2, pb_key))
 
 
 pr_key, pb_key = KeyGen()
 TestVer(pr_key, pb_key)
 # For you own uses please run the following code with substituting message value with desired value
 message = "Hello World"
-hashed, signature = sign(message, pb_key)
-print(verify(hashed, signature, pr_key))
+hashed, signature = sign(message, pr_key)
+print(verify(hashed, signature, pb_key))
